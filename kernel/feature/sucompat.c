@@ -338,6 +338,11 @@ int ksu_handle_execveat_sucompat(int *fd, struct filename **filename_ptr, void *
 
     return ksu_handle_execveat(fd, filename_ptr, argv, envp, flags);
 }
+int ksu_handle_post_execveat_sucompat(int *fd, struct filename **filename_ptr, void *argv, void *envp, int *flags,
+                                      int *retval)
+{
+    return ksu_handle_post_execveat(fd, filename_ptr, argv, envp, flags, retval);
+}
 #endif
 #endif
 
