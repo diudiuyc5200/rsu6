@@ -1,6 +1,4 @@
-menu "KernelSU"
-
-config KSU
+menuconfig KSU
 	tristate "KernelSU function support"
 	select KALLSYMS
 	default y
@@ -8,16 +6,16 @@ config KSU
 	  Enable kernel-level root privileges on Android System.
 	  Choose "m" here to build KernelSU as LKM
 
+if KSU
+
 config KSU_DEBUG
 	bool "KernelSU debug mode"
-	depends on KSU
 	default n
 	help
 	  Enable KernelSU debug mode.
 
 config KSU_TOOLKIT_SUPPORT
 	bool "KernelSU toolkit support"
-	depends on KSU
 	default n
 	help
 	  Enable KernelSU Toolkit (https://github.com/backslashxx/ksu_toolkit) support.
@@ -33,7 +31,6 @@ config KSU_TOOLKIT_SUPPORT
 
 config KSU_FULL_NAME_FORMAT
 	string "KernelSU full name format"
-	depends on KSU
 	default "%TAG_NAME%-%COMMIT_SHA%@%REPO_NAME%"
 	help
 	  Change the build time full name format.
@@ -47,7 +44,6 @@ config KSU_FULL_NAME_FORMAT
 
 config KSU_DISABLE_MANAGER
 	bool "Disable KernelSU manager integration"
-	depends on KSU
 	default n
 	help
 	  Disable manager APK detection and manager-specific handling.
@@ -55,7 +51,6 @@ config KSU_DISABLE_MANAGER
 
 config KSU_DISABLE_POLICY
 	bool "Disable KernelSU policy profiles"
-	depends on KSU
 	default n
 	help
 	  Disable per-app root/non-root profile customization.
@@ -64,14 +59,13 @@ config KSU_DISABLE_POLICY
 
 config KSU_MULTI_MANAGER_SUPPORT
 	bool "Multi KernelSU manager support"
-	depends on KSU && !KSU_DISABLE_MANAGER
+	depends on !KSU_DISABLE_MANAGER
 	default y
 	help
 	  Enable multi KernelSU manager support
 
 choice
 	prompt "KernelSU Hooking Method"
-	depends on KSU
 	default KSU_TRACEPOINT_HOOK
 	help
 	  Select the hooking method for KernelSU.
@@ -97,7 +91,7 @@ endchoice
 
 config KSU_SUSFS
 	bool "SUSFS Inline Hook"
-	depends on KSU && THREAD_INFO_IN_TASK && 64BIT
+	depends on THREAD_INFO_IN_TASK && 64BIT
 	help
 	  Patch and Enable SUSFS to kernel with KernelSU.
 	  SuSFS Officially support kernel 5.10+
@@ -116,7 +110,6 @@ comment "--------------------------------------------------------------"
 
 config KSU_MANUAL_HOOK_AUTO_SETUID_HOOK
 	bool "Automatically hook setuid by lsm"
-	depends on KSU_MANUAL_HOOK
 	default y
 	help
 	  THIS OPTION CAN NOT BE USED IN KERNEL_VERSION >= 6.8 DUE TO LSM CHANGES
@@ -128,7 +121,6 @@ config KSU_MANUAL_HOOK_AUTO_SETUID_HOOK
 
 config KSU_MANUAL_HOOK_AUTO_INITRC_HOOK
 	bool "Automatically hook ksu init rc by lsm"
-	depends on KSU_MANUAL_HOOK
 	default y
 	help
 	  THIS OPTION CAN NOT BE USED IN KERNEL_VERSION >= 6.8 DUE TO LSM CHANGES
@@ -140,7 +132,6 @@ config KSU_MANUAL_HOOK_AUTO_INITRC_HOOK
 
 config KSU_MANUAL_HOOK_AUTO_INPUT_HOOK
 	bool "Automatically hook input hook by input_handler"
-	depends on KSU_MANUAL_HOOK
 	default y
 	help
 	  If you turn off this option, edit drivers/input/input.c.
@@ -161,7 +152,6 @@ comment "--------------------------------------------------------------"
 
 config KSU_SUSFS_SUS_PATH
 	bool "Enable to hide suspicious path"
-	depends on KSU_SUSFS
 	default y
 	help
 	  - Allow hiding the user-defined path and all its sub-paths from various system calls.
@@ -172,7 +162,6 @@ config KSU_SUSFS_SUS_PATH
 
 config KSU_SUSFS_SUS_MOUNT
 	bool "Enable to hide suspicious mounts"
-	depends on KSU_SUSFS
 	default y
 	help
 	  - Automatically assign fake mnt_id and fake mnt_group_id for mounts mounted by ksu process until /sdcard is decrypted, this is to evade from mnt_id/mnt_group_id gap detections.
@@ -180,7 +169,6 @@ config KSU_SUSFS_SUS_MOUNT
 
 config KSU_SUSFS_SUS_KSTAT
 	bool "Enable to spoof suspicious kstat"
-	depends on KSU_SUSFS
 	default y
 	help
 	  - Allow spoofing the kstat of user-defined file/directory.
@@ -188,7 +176,6 @@ config KSU_SUSFS_SUS_KSTAT
 
 config KSU_SUSFS_SPOOF_UNAME
 	bool "Enable to spoof uname"
-	depends on KSU_SUSFS
 	default y
 	help
 	  - Allow spoofing the string returned by uname syscall to user-defined string.
@@ -196,14 +183,12 @@ config KSU_SUSFS_SPOOF_UNAME
 
 config KSU_SUSFS_ENABLE_LOG
 	bool "Enable logging susfs log to kernel"
-	depends on KSU_SUSFS
 	default y
 	help
 	  - Allow logging susfs log to kernel, uncheck it to completely disable all susfs log.
 
 config KSU_SUSFS_HIDE_KSU_SUSFS_SYMBOLS
 	bool "Enable to automatically hide ksu and susfs symbols from /proc/kallsyms"
-	depends on KSU_SUSFS
 	default y
 	help
 	  - Automatically hide ksu and susfs symbols from '/proc/kallsyms'.
@@ -211,7 +196,6 @@ config KSU_SUSFS_HIDE_KSU_SUSFS_SYMBOLS
 
 config KSU_SUSFS_SPOOF_CMDLINE_OR_BOOTCONFIG
 	bool "Enable to spoof /proc/bootconfig (gki) or /proc/cmdline (non-gki)"
-	depends on KSU_SUSFS
 	default y
 	help
 	  - Spoof the output of /proc/bootconfig (gki) or /proc/cmdline (non-gki) with a user-defined file.
@@ -219,7 +203,6 @@ config KSU_SUSFS_SPOOF_CMDLINE_OR_BOOTCONFIG
 
 config KSU_SUSFS_OPEN_REDIRECT
 	bool "Enable to redirect a path to be opened with another path (experimental)"
-	depends on KSU_SUSFS
 	default y
 	help
 	  - Allow redirecting a target path to be opened with another user-defined path.
@@ -228,7 +211,6 @@ config KSU_SUSFS_OPEN_REDIRECT
 
 config KSU_SUSFS_SUS_MAP
 	bool "Enable hiding some mmapped real files from different proc maps interfaces"
-	depends on KSU_SUSFS
 	default y
 	help
 	  - Allow hiding mmapped real files from /proc/<pid>/[maps|smaps|smaps_rollup|map_files|mem|pagemap]
@@ -239,4 +221,4 @@ config KSU_SUSFS_SUS_MAP
 
 endmenu
 
-endmenu
+endif
